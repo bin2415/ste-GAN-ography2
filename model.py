@@ -8,8 +8,10 @@ from tensorflow.contrib.layers import convolution2d
 from tensorflow.contrib.layers import fully_connected
 from tensorflow.python.ops.nn import sigmoid_cross_entropy_with_logits as cross_entropy
 from tensorflow.contrib.layers import batch_norm as BatchNorm
+#tf.merge_all_summaries = tf.summary.merge_all
+#tf.train.SummaryWriter = tf.summary.FileWriter
 class Model:
-    def __init__(self, sess, conf, N, batch_size, learning_rate, x_weidu = 64, y_weidu = 64, rgb_weidu = 3, shape = (64, 64, 3)):
+    def __init__(self, sess, conf, N, batch_size, learning_rate, x_weidu = 28, y_weidu = 28, rgb_weidu = 3, shape = (28, 28, 3)):
         '''
         sess:tensorflow的Session()会话
         N:明文的长度
@@ -40,6 +42,7 @@ class Model:
 
 
         self.bob_input = tf.reshape(alice_conv4, [-1, self.x_weidu, self.y_weidu, self.rgb])
+        
 
         #Bob网络结构
         bob_conv1 = convolution2d(self.bob_input, 64, kernel_size = [5, 5], stride = [2,2],
@@ -109,6 +112,9 @@ class Model:
 
         #merged = tf.merge_all_summaries()
         #train_weiter = tf.train.SummaryWriter('./logs_sgan', self.sess.graph)
+        #tf.summary.scalar("bob_input", self.bob_input)
+        #merged_summary_op = tf.summary.merge_all()
+        #summary_writer = tf.summary.FileWriter('./logs', self.sess.graph)
         tf.initialize_all_variables().run()
         bob_results = []
 
@@ -122,6 +128,8 @@ class Model:
                 bit_error, alice_error = self.sess.run([self.Bob_bit_error, self.Alice_bit_error], feed_dict= {self.data_images: data[0 : self.batch_size]})
                 print("step {}, bob bit error {}, alice bit error {}".format(i, bit_error, alice_error))
                 bob_results.append(bit_error)
+                #summary_str = self.sess.run(merged_summary_op, feed_dict = {self.data_images: data[ 0: self.batch_size]})
+                #summary_writer.add_summary(summary_str, i)
         return bob_results
                 
             
