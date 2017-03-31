@@ -187,7 +187,7 @@ class Model:
         '''
         self.alice_saver.save(self.sess, save_path + 'alice_model.ckpt')
         self.bob_saver.save(self.sess, save_path + '/bob_model.ckpt')
-        self.eve_saver.save(self.eve_saver, save_path + '/eve_model.ckpt')
+        self.eve_saver.save(self.sess, save_path + '/eve_model.ckpt')
 
         
 
