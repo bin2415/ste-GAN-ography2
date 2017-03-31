@@ -104,8 +104,8 @@ class Model:
 
         #Saver
         self.alice_saver = tf.train.Saver(self.Alice_vars)
-        self.bob_saver = tf.train.Saver(self.bob_saver)
-        self.eve_saver = tf.train.Saver(self.eve_saver)
+        self.bob_saver = tf.train.Saver(self.Bob_vars)
+        self.eve_saver = tf.train.Saver(self.Eve_vars)
         print("初始化")
     
     def train(self, epochs):
