@@ -99,6 +99,8 @@ class Model:
 
         self.Bob_bit_error = utils.calculate_bit_error(self.P, bob_fc, [1])
         self.Alice_bit_error = utils.calculate_bit_error(self.data_images, self.bob_input, [1,2,3])
+        self.Eve_fake_error = tf.reduce_mean(eve_fake)
+        self.Eve_real_error = tf.reduce_mean(eve_real)
         print("初始化")
     
     def train(self, epochs):
@@ -117,6 +119,7 @@ class Model:
         #summary_writer = tf.summary.FileWriter('./logs', self.sess.graph)
         tf.initialize_all_variables().run()
         bob_results = []
+        alice_results = []
 
         while(len(data) < self.batch_size):
             data.append(data)
@@ -127,12 +130,20 @@ class Model:
             self.sess.run(self.bob_step, feed_dict= {self.data_images: data[0 : self.batch_size]})
             self.sess.run(self.eve_step, feed_dict= {self.data_images: data[0 : self.batch_size]})
             if i % 100 == 0:
-                bit_error, alice_error = self.sess.run([self.Bob_bit_error, self.Alice_bit_error], feed_dict= {self.data_images: data[0 : self.batch_size]})
-                print("step {}, bob bit error {}, alice bit error {}".format(i, bit_error, alice_error))
+                bit_error, alice_error, eve_real, eve_fake = self.sess.run([self.Bob_bit_error, self.Alice_bit_error, self.Eve_real_error, self.Eve_fake_error], 
+                feed_dict= {self.data_images: data[0 : self.batch_size]})
+                print("step {}, bob bit error {}, alice bit error {}, Eve real {}, Eve fake {}".format(i, bit_error, alice_error, eve_real, eve_fake))
                 bob_results.append(bit_error)
+                alice_results.append(alice_error)
                 #summary_str = self.sess.run(merged_summary_op, feed_dict = {self.data_images: data[ 0: self.batch_size]})
                 #summary_writer.add_summary(summary_str, i)
-        return bob_results
+            if (i > 45000) and (i % 100 == 0):
+                c_output = self.sess.run(self.bob_input, feed_dict= {self.data_images: data[0 : self.batch_size]})
+                c_output = utils.inverse_transform(c_output)
+                utils.save_images(c_output, i, self.conf.save_pic_dict)
+        #保存图片
+        c_output = self.sess.run(self.bob_input, feed_dict= {self.data_images: data[0 : self.batch_size]})
+        return bob_results, alice_results
                 
             
 

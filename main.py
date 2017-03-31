@@ -37,6 +37,7 @@ for i in range(FLAGS.training):
       with tf.Session() as sess:
           model = Model(sess, FLAGS, FLAGS.plain_nums, FLAGS.batch_size, FLAGS.learning_rate)
           model.train(50000)
+          #c_output = sess.run(model.bob_input, feed_dict=)
       #model = Model(FLAGS, FLAGS.plain_nums, FLAGS.batch_size, FLAGS.learning_rate)
       #print("training {0} begining".format(i))
       #bob_results = model.train(FLAGS.training_epochs)
