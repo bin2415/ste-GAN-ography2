@@ -99,8 +99,8 @@ class Model:
 
         self.Bob_bit_error = utils.calculate_bit_error(self.P, bob_fc, [1])
         self.Alice_bit_error = utils.calculate_bit_error(self.data_images, self.bob_input, [1,2,3])
-        self.Eve_fake_error = tf.reduce_mean(eve_fake)
-        self.Eve_real_error = tf.reduce_mean(eve_real)
+        self.Eve_fake_error = tf.reduce_mean(tf.nn.sigmoid(eve_fake))
+        self.Eve_real_error = tf.reduce_mean(tf.nn.sigmoid(eve_real))
         print("初始化")
     
     def train(self, epochs):
