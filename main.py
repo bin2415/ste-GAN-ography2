@@ -15,6 +15,7 @@ import logger
 import utils
 from model import Model
 import sys
+import matplotlib.pyplot as plt
 #sys.setrecursionlimit(1000)
 
 flags = tf.app.flags
@@ -24,6 +25,7 @@ flags.DEFINE_float("alphaC", 0.2, "alphaC的值")
 flags.DEFINE_float("learning_rate", 0.0008, "学习速率")
 flags.DEFINE_string("pic_dict", "./pictures", "存放的图片的位置")
 flags.DEFINE_string("save_pic_dict", "/savedPictures", "保存的图片位置")
+flags.DEFINE_string('save_model_dict',"/savedModel", "存放的模型的位置")
 flags.DEFINE_string("img_format", "jpg", "处理的图片格式")
 flags.DEFINE_integer("batch_size", 16, "训练的样本数量")
 flags.DEFINE_integer("plain_nums", 16, "明文的长度")
@@ -36,7 +38,13 @@ for i in range(FLAGS.training):
       logger.log("training begin")
       with tf.Session() as sess:
           model = Model(sess, FLAGS, FLAGS.plain_nums, FLAGS.batch_size, FLAGS.learning_rate)
-          model.train(50000)
+          bob_results, alice_results = model.train(50000)
+          plt.figure()
+          plt.plot(range(0, FLAGS.training_epochs, 100), bob_results)
+          plt.xlabel('training iteration', fontsize = 16)
+          plt.ylabel('bit error', fontsize = 16)
+          plt.savefig(FLAGS.save_pic_dict+"/training.png")
+          model.save(FLAGS.save_model_dict)
           #c_output = sess.run(model.bob_input, feed_dict=)
       #model = Model(FLAGS, FLAGS.plain_nums, FLAGS.batch_size, FLAGS.learning_rate)
       #print("training {0} begining".format(i))

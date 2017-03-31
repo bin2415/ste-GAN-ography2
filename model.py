@@ -101,6 +101,11 @@ class Model:
         self.Alice_bit_error = utils.calculate_bit_error(self.data_images, self.bob_input, [1,2,3])
         self.Eve_fake_error = tf.reduce_mean(tf.nn.sigmoid(eve_fake))
         self.Eve_real_error = tf.reduce_mean(tf.nn.sigmoid(eve_real))
+
+        #Saver
+        self.alice_saver = tf.train.Saver(self.Alice_vars)
+        self.bob_saver = tf.train.Saver(self.bob_saver)
+        self.eve_saver = tf.train.Saver(self.eve_saver)
         print("初始化")
     
     def train(self, epochs):
@@ -169,6 +174,20 @@ class Model:
         eve_fc = fully_connected(eve_conv4, 1, normalizer_fn = BatchNorm, 
         weights_initializer=tf.random_normal_initializer(stddev=1.0))
         return eve_fc
+    
+
+    '''
+    保存模型
+    '''
+    def save(self, save_path):
+        '''
+        arguments:
+        save_path: string
+        要保存的模型的地址
+        '''
+        self.alice_saver.save(self.sess, save_path + 'alice_model.ckpt')
+        self.bob_saver.save(self.sess, save_path + '/bob_model.ckpt')
+        self.eve_saver.save(self.eve_saver, save_path + '/eve_model.ckpt')
 
         
 
