@@ -142,7 +142,7 @@ class Model:
                 alice_results.append(alice_error)
                 #summary_str = self.sess.run(merged_summary_op, feed_dict = {self.data_images: data[ 0: self.batch_size]})
                 #summary_writer.add_summary(summary_str, i)
-            if (i > 45000) and (i % 100 == 0):
+            if (i > 0) and (i % 100 == 0):
                 c_output = self.sess.run(self.bob_input, feed_dict= {self.data_images: data[0 : self.batch_size]})
                 c_output = utils.inverse_transform(c_output)
                 utils.save_images(c_output, i, self.conf.save_pic_dict)
