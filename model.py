@@ -132,6 +132,8 @@ class Model:
             self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
             self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
             self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
+            self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
+            self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
             self.sess.run(self.bob_step, feed_dict= {self.data_images: data[0 : self.batch_size]})
             self.sess.run(self.eve_step, feed_dict= {self.data_images: data[0 : self.batch_size]})
             self.sess.run(self.eve_step, feed_dict= {self.data_images: data[0 : self.batch_size]})
