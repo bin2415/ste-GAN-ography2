@@ -134,6 +134,7 @@ class Model:
             self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
             self.sess.run(self.bob_step, feed_dict= {self.data_images: data[0 : self.batch_size]})
             self.sess.run(self.eve_step, feed_dict= {self.data_images: data[0 : self.batch_size]})
+            self.sess.run(self.eve_step, feed_dict= {self.data_images: data[0 : self.batch_size]})
             if i % 100 == 0:
                 bit_error, alice_error, eve_real, eve_fake = self.sess.run([self.Bob_bit_error, self.Alice_bit_error, self.Eve_real_error, self.Eve_fake_error], 
                 feed_dict= {self.data_images: data[0 : self.batch_size]})
