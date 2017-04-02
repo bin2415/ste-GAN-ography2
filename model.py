@@ -173,7 +173,7 @@ class Model:
         eve_conv3 = convolution2d(eve_conv2, 64 * 4,kernel_size = [5, 5], stride = [2,2],
         activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'eve/conv3')
 
-        eve_conv4 = convolution2d(eve_conv2, 64* 8, kernel_size = [5, 5], stride = [2,2],
+        eve_conv4 = convolution2d(eve_conv3, 64* 8, kernel_size = [5, 5], stride = [2,2],
         activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'eve/conv4')
 
         eve_conv4 = tf.reshape(eve_conv4, [batch_size, -1])
