@@ -96,7 +96,7 @@ class Model:
         self.alice_step = optimizer1.minimize(self.Alice_loss, var_list= self.Alice_vars)
         self.bob_step = optimizer2.minimize(self.Bob_loss, var_list= self.Bob_vars)
         self.eve_step = optimizer3.minimize(self.Eve_loss, var_list= self.Eve_vars)
-        self.alice_step_only = optimizer4.minimize(Alice_C_loss, var_list= self.Alice_vars)
+        #self.alice_step_only = optimizer4.minimize(Alice_C_loss, var_list= self.Alice_vars)
 
         #定义Saver
         self.alice_saver = tf.train.Saver(self.Alice_vars)
