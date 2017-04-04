@@ -49,16 +49,16 @@ class Model:
 
         #Bob网络结构
         bob_conv1 = convolution2d(self.bob_input, 64, kernel_size = [5, 5], stride = [2,2],
-        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'bob/conv1')
+        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'bob')
 
         bob_conv2 = convolution2d(bob_conv1, 64 * 2, kernel_size = [5, 5], stride = [2,2],
-        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'bob/conv2')
+        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'bob')
 
         bob_conv3 = convolution2d(bob_conv2, 64 * 4, kernel_size = [5, 5], stride = [2,2],
-        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'bob/conv3')
+        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'bob')
 
         bob_conv4 = convolution2d(bob_conv3, 64 * 8,kernel_size = [5, 5], stride = [2,2],
-        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'bob/conv4')
+        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'bob')
 
         bob_conv4 = tf.reshape(bob_conv4, [batch_size, -1])
         bob_fc = fully_connected(bob_conv4, N, activation_fn = tf.nn.tanh, normalizer_fn = BatchNorm,
@@ -84,16 +84,19 @@ class Model:
         optimizer1 = tf.train.AdamOptimizer(self.conf.learning_rate)
         optimizer2 = tf.train.AdamOptimizer(self.conf.learning_rate)
         optimizer3 = tf.train.AdamOptimizer(self.conf.learning_rate)
+        optimizer4 = tf.train.AdamOptimizer(self.conf.learning_rate)
         
         #获取变量列表
         self.Alice_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, "alice/")
-        self.Bob_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, 'bob/')
-        self.Eve_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, 'eve/')
+        self.Bob_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, 'bob')
+        self.Eve_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, 'eve')
+        print(self.Bob_vars)
 
         #定义trainning step
         self.alice_step = optimizer1.minimize(self.Alice_loss, var_list= self.Alice_vars)
         self.bob_step = optimizer2.minimize(self.Bob_loss, var_list= self.Bob_vars)
         self.eve_step = optimizer3.minimize(self.Eve_loss, var_list= self.Eve_vars)
+        self.alice_step_only = optimizer4.minimize(Alice_C_loss, var_list= self.Alice_vars)
 
         #定义Saver
         self.alice_saver = tf.train.Saver(self.Alice_vars)
@@ -132,9 +135,10 @@ class Model:
         while(len(data) < self.batch_size):
             data.append(data)
         for i in range(epochs):
-            self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
-            self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
-            self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
+            if i >=0 and i <= 30000:
+                self.sess.run(self.alice_step_only, feed_dict = {self.data_images: data[ 0: self.batch_size]})
+                self.sess.run(self.alice_step_only, feed_dict = {self.data_images: data[ 0: self.batch_size]})
+            self.sess.run(self.alice_step_only, feed_dict = {self.data_images: data[ 0: self.batch_size]})
             #self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
             #self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
             if i > 30000:
@@ -143,6 +147,8 @@ class Model:
             self.sess.run(self.bob_step, feed_dict= {self.data_images: data[0 : self.batch_size]})
             #self.sess.run(self.eve_step, feed_dict= {self.data_images: data[0 : self.batch_size]})
             self.sess.run(self.eve_step, feed_dict= {self.data_images: data[0 : self.batch_size]})
+            self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
+            self.sess.run()
             if i % 100 == 0:
                 bit_error, alice_error, eve_real, eve_fake = self.sess.run([self.Bob_bit_error, self.Alice_bit_error, self.Eve_real_error, self.Eve_fake_error], 
                 feed_dict= {self.data_images: data[0 : self.batch_size]})
@@ -165,16 +171,16 @@ class Model:
 ### Eve的网络结构
     def discriminator_stego_nn(self, img, batch_size):
         eve_conv1 = convolution2d(img, 64, kernel_size = [5, 5], stride = [2,2],
-        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'eve/conv1')
+        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'eve')
 
         eve_conv2 = convolution2d(eve_conv1, 64 * 2, kernel_size = [5, 5], stride = [2,2],
-        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'eve/conv2')
+        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'eve')
 
         eve_conv3 = convolution2d(eve_conv2, 64 * 4,kernel_size = [5, 5], stride = [2,2],
-        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'eve/conv3')
+        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'eve')
 
         eve_conv4 = convolution2d(eve_conv3, 64* 8, kernel_size = [5, 5], stride = [2,2],
-        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'eve/conv4')
+        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'eve')
 
         eve_conv4 = tf.reshape(eve_conv4, [batch_size, -1])
 
