@@ -84,7 +84,7 @@ class Model:
         optimizer1 = tf.train.AdamOptimizer(self.conf.learning_rate)
         optimizer2 = tf.train.AdamOptimizer(self.conf.learning_rate)
         optimizer3 = tf.train.AdamOptimizer(self.conf.learning_rate)
-        optimizer4 = tf.train.AdamOptimizer(self.conf.learning_rate)
+        #optimizer4 = tf.train.AdamOptimizer(self.conf.learning_rate)
         
         #获取变量列表
         self.Alice_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, "alice/")
@@ -135,19 +135,19 @@ class Model:
         while(len(data) < self.batch_size):
             data.append(data)
         for i in range(epochs):
-            if i >=0 and i <= 30000:
-                self.sess.run(self.alice_step_only, feed_dict = {self.data_images: data[ 0: self.batch_size]})
-                self.sess.run(self.alice_step_only, feed_dict = {self.data_images: data[ 0: self.batch_size]})
-            self.sess.run(self.alice_step_only, feed_dict = {self.data_images: data[ 0: self.batch_size]})
-            #self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
-            #self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
-            if i > 30000:
-                self.sess.run(self.bob_step, feed_dict= {self.data_images: data[0 : self.batch_size]})
-                self.sess.run(self.eve_step, feed_dict= {self.data_images: data[0 : self.batch_size]})
+            #if i >=0 and i <= 30000:
+                ##self.sess.run(self.alice_step_only, feed_dict = {self.data_images: data[ 0: self.batch_size]})
+            #self.sess.run(self.alice_step_only, feed_dict = {self.data_images: data[ 0: self.batch_size]})
+            self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
+            self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
+            self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
+            #if i > 30000:
+            #    self.sess.run(self.bob_step, feed_dict= {self.data_images: data[0 : self.batch_size]})
+            #    self.sess.run(self.eve_step, feed_dict= {self.data_images: data[0 : self.batch_size]})
             self.sess.run(self.bob_step, feed_dict= {self.data_images: data[0 : self.batch_size]})
             #self.sess.run(self.eve_step, feed_dict= {self.data_images: data[0 : self.batch_size]})
             self.sess.run(self.eve_step, feed_dict= {self.data_images: data[0 : self.batch_size]})
-            self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
+            #self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
             if i % 100 == 0:
                 bit_error, alice_error, eve_real, eve_fake = self.sess.run([self.Bob_bit_error, self.Alice_bit_error, self.Eve_real_error, self.Eve_fake_error], 
                 feed_dict= {self.data_images: data[0 : self.batch_size]})
@@ -178,7 +178,7 @@ class Model:
         eve_conv3 = convolution2d(eve_conv2, 64 * 4,kernel_size = [5, 5], stride = [2,2],
         activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'eve/' + name + '/conv3')
 
-        eve_conv4 = convolution2d(eve_conv3, 64* 8, kernel_size = [5, 5], stride = [2,2],
+        eve_conv4 = convolution2d(eve_conv2, 64* 8, kernel_size = [5, 5], stride = [2,2],
         activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'eve/' + name + '/conv4')
 
         eve_conv4 = tf.reshape(eve_conv4, [batch_size, -1])
