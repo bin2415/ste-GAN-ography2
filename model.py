@@ -49,16 +49,16 @@ class Model:
 
         #Bob网络结构
         bob_conv1 = convolution2d(self.bob_input, 64, kernel_size = [5, 5], stride = [2,2],
-        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'bob')
+        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'bob/conv1')
 
         bob_conv2 = convolution2d(bob_conv1, 64 * 2, kernel_size = [5, 5], stride = [2,2],
-        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'bob')
+        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'bob/conv2')
 
         bob_conv3 = convolution2d(bob_conv2, 64 * 4, kernel_size = [5, 5], stride = [2,2],
-        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'bob')
+        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'bob/conv3')
 
         bob_conv4 = convolution2d(bob_conv3, 64 * 8,kernel_size = [5, 5], stride = [2,2],
-        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'bob')
+        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'bob/conv4')
 
         bob_conv4 = tf.reshape(bob_conv4, [batch_size, -1])
         bob_fc = fully_connected(bob_conv4, N, activation_fn = tf.nn.tanh, normalizer_fn = BatchNorm,
@@ -66,8 +66,8 @@ class Model:
         #Bob_loss = tf.reduce_mean(utils.Distance(bob_fc, self.P, [1]))
 
         #Eve网络
-        eve_real = self.discriminator_stego_nn(self.data_images, batch_size)
-        eve_fake = self.discriminator_stego_nn(self.bob_input, batch_size)
+        eve_real = self.discriminator_stego_nn(self.data_images, batch_size, 'real')
+        eve_fake = self.discriminator_stego_nn(self.bob_input, batch_size, 'fake')
 
         #Bob损失函数
         self.Bob_loss = tf.reduce_mean(utils.Distance(bob_fc, self.P, [1]))
@@ -88,8 +88,8 @@ class Model:
         
         #获取变量列表
         self.Alice_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, "alice/")
-        self.Bob_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, 'bob')
-        self.Eve_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, 'eve')
+        self.Bob_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, 'bob/')
+        self.Eve_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, 'eve/')
         print(self.Bob_vars)
 
         #定义trainning step
@@ -168,18 +168,18 @@ class Model:
 
 
 ### Eve的网络结构
-    def discriminator_stego_nn(self, img, batch_size):
+    def discriminator_stego_nn(self, img, batch_size, name):
         eve_conv1 = convolution2d(img, 64, kernel_size = [5, 5], stride = [2,2],
-        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'eve')
+        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'eve/' + name + '/conv1')
 
         eve_conv2 = convolution2d(eve_conv1, 64 * 2, kernel_size = [5, 5], stride = [2,2],
-        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'eve')
+        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'eve/' + name + '/conv2')
 
         eve_conv3 = convolution2d(eve_conv2, 64 * 4,kernel_size = [5, 5], stride = [2,2],
-        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'eve')
+        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'eve/' + name + '/conv3')
 
         eve_conv4 = convolution2d(eve_conv3, 64* 8, kernel_size = [5, 5], stride = [2,2],
-        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'eve')
+        activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'eve/' + name + '/conv4')
 
         eve_conv4 = tf.reshape(eve_conv4, [batch_size, -1])
 
