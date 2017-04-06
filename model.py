@@ -11,7 +11,7 @@ from tensorflow.contrib.layers import batch_norm as BatchNorm
 #tf.merge_all_summaries = tf.summary.merge_all
 #tf.train.SummaryWriter = tf.summary.FileWriter
 class Model:
-    def __init__(self, sess, conf, N, batch_size, learning_rate, x_weidu = 28, y_weidu = 28, rgb_weidu = 3, shape = (28, 28, 3)):
+    def __init__(self, sess, conf, N, batch_size, learning_rate, x_weidu = 64, y_weidu = 64, rgb_weidu = 3, shape = (64, 64, 3)):
         '''
         sess:tensorflow的Session()会话
         N:明文的长度
