@@ -15,7 +15,7 @@ import logger
 import utils
 from model import Model
 import sys
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 #sys.setrecursionlimit(1000)
 
 flags = tf.app.flags
@@ -39,11 +39,11 @@ for i in range(FLAGS.training):
       with tf.Session() as sess:
           model = Model(sess, FLAGS, FLAGS.plain_nums, FLAGS.batch_size, FLAGS.learning_rate)
           bob_results, alice_results = model.train(50000)
-          plt.figure()
-          plt.plot(range(0, FLAGS.training_epochs, 100), bob_results)
-          plt.xlabel('training iteration', fontsize = 16)
-          plt.ylabel('bit error', fontsize = 16)
-          plt.savefig(FLAGS.save_pic_dict+"/training.png")
+          #plt.figure()
+          #plt.plot(range(0, FLAGS.training_epochs, 100), bob_results)
+          #plt.xlabel('training iteration', fontsize = 16)
+          #plt.ylabel('bit error', fontsize = 16)
+          #plt.savefig(FLAGS.save_pic_dict+"/training.png")
           model.save(FLAGS.save_model_dict)
           #c_output = sess.run(model.bob_input, feed_dict=)
       #model = Model(FLAGS, FLAGS.plain_nums, FLAGS.batch_size, FLAGS.learning_rate)
