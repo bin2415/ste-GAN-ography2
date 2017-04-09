@@ -243,8 +243,8 @@ class Model:
 
 ### Eve的网络结构
     def discriminator_stego_nn(self, img, batch_size, name):
-        #eve_input = self.image_processing_layer(img)
-        eve_conv1 = convolution2d(img, 64, kernel_size = [5, 5], stride = [2,2],
+        eve_input = self.image_processing_layer(img)
+        eve_conv1 = convolution2d(eve_input, 64, kernel_size = [5, 5], stride = [2,2],
         activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'eve/' + name + '/conv1')
 
         eve_conv2 = convolution2d(eve_conv1, 64 * 2, kernel_size = [5, 5], stride = [2,2],
