@@ -99,7 +99,7 @@ class Model:
         alice_conv2 = self.g_bn2(alice_conv2, train = True)
         alice_conv2 = tf.nn.relu(alice_conv2)
 
-        alice_conv3 = self.conv2d_transpose(alice_conv2, [self.batch_size, self.x_weidu, self.y_weidu, self.rgb * 1], name = 'alice/conv3')
+        alice_conv3 = self.conv2d_transpose(alice_conv2, [self.batch_size, self.x_weidu /2 , self.y_weidu/2, self.rgb * 1], name = 'alice/conv3')
         alice_conv3 = self.g_bn3(alice_conv3, train = True)
         alice_conv3 = tf.nn.relu(alice_conv3)
 
