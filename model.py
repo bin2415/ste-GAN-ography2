@@ -300,7 +300,7 @@ class Model:
     def conv2d_transpose(self, input_, output_shape, k_h = 5, k_w = 5, d_h = 2, d_w = 2, stddev = 0.2, name = "deconv2d"):
         with tf.variable_scope(name):
             #filter: [height, width, output_channels, in_channels]
-            w = tf.get_variable('w', [k_h, k_h, output_shape[-1], input_.get_shape()[-1]],
+            w = tf.get_variable('w', [k_h, k_w, output_shape[-1], input_.get_shape()[-1]],
                                 initializer= tf.random_normal_initializer(stddev = stddev)
             )
             return tf.nn.conv2d_transpose(input_, w, output_shape = output_shape, strides = [1, d_h, d_w, 1])
@@ -308,8 +308,8 @@ class Model:
     #卷积网络
     def conv2d(self, input_, output_channel, k_h = 5, k_w = 5, d_h = 2, d_w = 2, stddev = 0.2, name = "deconv2d"):
         with tf.variable_scope(name):
-            #filter: [height, width, output_channels, in_channels]
-            w = tf.get_variable('w', [k_h, k_h, input_[-1], output_channel],
+            #filter: [height, width, in_channels, output_channels]
+            w = tf.get_variable('w', [k_h, k_w, input_.get_shape()[-1], output_channel],
                                 initializer= tf.random_normal_initializer(stddev = stddev)
             )
             return tf.nn.conv2d(input_, w, strides = [1, d_h, d_w, 1], padding = 'SAME')
