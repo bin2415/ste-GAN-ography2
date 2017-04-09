@@ -91,19 +91,19 @@ class Model:
         alice_fc = self.g_bn0(alice_fc, train = True)
         aclie_fc = tf.nn.relu(alice_fc)
 
-        alice_conv1 = self.conv2d_transpose(alice_fc, [self.batch_size, self.x_weidu, self.y_weidu, self.rgb * 4], name = 'alice/conv1')
+        alice_conv1 = self.conv2d_transpose(alice_fc, [self.batch_size, self.x_weidu*2, self.y_weidu*2, self.rgb * 4], name = 'alice/conv1')
         alice_conv1 = self.g_bn1(alice_conv1, train = True)
         alice_conv1 = tf.nn.relu(alice_conv1)
 
-        alice_conv2 = self.conv2d_transpose(alice_conv1, [self.batch_size, self.x_weidu * 2, self.y_weidu * 2, self.rgb * 2], name = 'alice/conv2')
+        alice_conv2 = self.conv2d_transpose(alice_conv1, [self.batch_size, self.x_weidu * 4, self.y_weidu * 4, self.rgb * 8], name = 'alice/conv2')
         alice_conv2 = self.g_bn2(alice_conv2, train = True)
         alice_conv2 = tf.nn.relu(alice_conv2)
 
-        alice_conv3 = self.conv2d_transpose(alice_conv2, [self.batch_size, self.x_weidu * 4, self.y_weidu * 4, self.rgb * 1], name = 'alice/conv3')
+        alice_conv3 = self.conv2d(alice_conv2, self.rgb * 4, name = 'alice/conv3')
         alice_conv3 = self.g_bn3(alice_conv3, train = True)
         alice_conv3 = tf.nn.relu(alice_conv3)
 
-        alice_conv4 = self.conv2d(alice_conv3, name = 'alice/conv4')
+        alice_conv4 = self.conv2d(alice_conv3, self.rgb, name = 'alice/conv4')
         alice_conv4 = tf.nn.tanh(alice_conv4)
 
 
@@ -296,6 +296,7 @@ class Model:
 
         return tf.nn.conv2d(X, tf.transpose(kernel, [2, 3, 0, 1]), [1, 1, 1, 1], padding='SAME')
     
+    #反卷积网络
     def conv2d_transpose(self, input_, output_shape, k_h = 5, k_w = 5, d_h = 2, d_w = 2, stddev = 0.2, name = "deconv2d"):
         with tf.variable_scope(name):
             #filter: [height, width, output_channels, in_channels]
@@ -304,10 +305,11 @@ class Model:
             )
             return tf.nn.conv2d_transpose(input_, w, output_shape = output_shape, strides = [1, d_h, d_w, 1])
     
-    def conv2d(self, input_, k_h = 5, k_w = 5, d_h = 4, d_w = 4, stddev = 0.2, name = "deconv2d"):
+    #卷积网络
+    def conv2d(self, input_, output_channel, k_h = 5, k_w = 5, d_h = 2, d_w = 2, stddev = 0.2, name = "deconv2d"):
         with tf.variable_scope(name):
             #filter: [height, width, output_channels, in_channels]
-            w = tf.get_variable('w', [k_h, k_h, 3, 3],
+            w = tf.get_variable('w', [k_h, k_h, input_[-1], output_channel],
                                 initializer= tf.random_normal_initializer(stddev = stddev)
             )
             return tf.nn.conv2d(input_, w, strides = [1, d_h, d_w, 1], padding = 'SAME')
