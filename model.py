@@ -99,11 +99,11 @@ class Model:
         alice_conv2 = self.g_bn2(alice_conv2, train = True)
         alice_conv2 = tf.nn.relu(alice_conv2)
 
-        alice_conv3 = self.conv2d_transpose(alice_conv2, [self.batch_size, 16 , 16, self.rgb * 1], name = 'alice/conv3')
+        alice_conv3 = self.conv2d_transpose(alice_conv2, [self.batch_size, self.x_weidu * 4, self.y_weidu * 4, self.rgb * 1], name = 'alice/conv3')
         alice_conv3 = self.g_bn3(alice_conv3, train = True)
         alice_conv3 = tf.nn.relu(alice_conv3)
 
-        alice_conv4 = self.conv2d_transpose(alice_conv3, [self.batch_size, self.x_weidu, self.y_weidu, self.rgb], name = 'alice/conv4')
+        alice_conv4 = self.conv2d(alice_conv3, name = 'alice/conv4')
         alice_conv4 = tf.nn.tanh(alice_conv4)
 
 
@@ -302,7 +302,17 @@ class Model:
             w = tf.get_variable('w', [k_h, k_h, output_shape[-1], input_.get_shape()[-1]],
                                 initializer= tf.random_normal_initializer(stddev = stddev)
             )
-            return tf.nn.conv2d_transpose(input_, w, output_shape = output_shape, strides = [1, d_h, d_w, 1], name = name)
+            return tf.nn.conv2d_transpose(input_, w, output_shape = output_shape, strides = [1, d_h, d_w, 1])
+    
+    def conv2d(self, input_, k_h = 5, k_w = 5, d_h = 4, d_w = 4, stddev = 0.2, name = "deconv2d"):
+        with tf.variable_scope(name):
+            #filter: [height, width, output_channels, in_channels]
+            w = tf.get_variable('w', [k_h, k_h, output_shape[-1], input_.get_shape()[-1]],
+                                initializer= tf.random_normal_initializer(stddev = stddev)
+            )
+            return tf.nn.conv2d(input_, w, strides = [1, d_h, d_w, 1])
+        
+
 
 
         
