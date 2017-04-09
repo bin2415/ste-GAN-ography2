@@ -12,7 +12,7 @@ from tensorflow.contrib.layers import batch_norm as BatchNorm
 #tf.train.SummaryWriter = tf.summary.FileWriter
 
 class batch_norm(object):
-    """Code modification of http://stackoverflow.com/a/33950177"""
+    """代码参考了http://stackoverflow.com/a/33950177"""
     def __init__(self, epsilon=1e-5, momentum = 0.9, name="batch_norm"):
         with tf.variable_scope(name):
             self.epsilon = epsilon
