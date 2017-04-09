@@ -10,6 +10,46 @@ from tensorflow.python.ops.nn import sigmoid_cross_entropy_with_logits as cross_
 from tensorflow.contrib.layers import batch_norm as BatchNorm
 #tf.merge_all_summaries = tf.summary.merge_all
 #tf.train.SummaryWriter = tf.summary.FileWriter
+
+class batch_norm(object):
+    """Code modification of http://stackoverflow.com/a/33950177"""
+    def __init__(self, epsilon=1e-5, momentum = 0.9, name="batch_norm"):
+        with tf.variable_scope(name):
+            self.epsilon = epsilon
+            self.momentum = momentum
+
+            self.ema = tf.train.ExponentialMovingAverage(decay=self.momentum)
+            self.name = name
+
+    def __call__(self, x, train=True):
+        shape = x.get_shape().as_list()
+
+        if train:
+            with tf.variable_scope(self.name) as scope:
+                self.beta = tf.get_variable("beta", [shape[-1]],
+                                    initializer=tf.constant_initializer(0.))
+                self.gamma = tf.get_variable("gamma", [shape[-1]],
+                                    initializer=tf.random_normal_initializer(1., 0.02))
+
+                try:
+                    batch_mean, batch_var = tf.nn.moments(x, [0, 1, 2], name='moments')
+                except:
+                    batch_mean, batch_var = tf.nn.moments(x, [0, 1], name='moments')
+
+                ema_apply_op = self.ema.apply([batch_mean, batch_var])
+                self.ema_mean, self.ema_var = self.ema.average(batch_mean), self.ema.average(batch_var)
+
+                with tf.control_dependencies([ema_apply_op]):
+                    mean, var = tf.identity(batch_mean), tf.identity(batch_var)
+        else:
+            mean, var = self.ema_mean, self.ema_var
+
+        normed = tf.nn.batch_norm_with_global_normalization(
+                x, mean, var, self.beta, self.gamma, self.epsilon, scale_after_normalization=True)
+
+        return normed
+
+
 class Model:
     def __init__(self, sess, conf, N, batch_size, learning_rate, x_weidu = 32, y_weidu = 32, rgb_weidu = 3, shape = (32, 32, 3)):
         '''
@@ -33,18 +73,46 @@ class Model:
 
         drop_rate = tf.constant(0.5, dtype = tf.float32)
 
+        self.g_bn0 = batch_norm(name = 'alice/bn0')
+        self.g_bn1 = batch_norm(name = 'alice/bn1')
+        self.g_bn2 = batch_norm(name = 'alice/bn2')
+        self.g_bn3 = batch_norm(name = 'alice/bn3')
+
         #Alice结构
         image_length = self.x_weidu * self.y_weidu * self.rgb
-        alice_fc = fc_layer(alice_input, shape = (image_length + N, 2 * image_length), name = 'alice/alice_fc')
-        alice_fc = tf.reshape(alice_fc, [batch_size, 2 * image_length, 1])
-        alice_conv1 = conv_layer(alice_fc, filter_shape = [4,1,2], stride = 1, sigmoid = True, name = 'alice/alice_conv1')
-        alice_conv2 = conv_layer(alice_conv1, filter_shape = [2,2,4], stride = 2, sigmoid = True, name = 'alice/alice_conv2')
+        alice_fc = fc_layer(alice_input, shape = (image_length + N, image_length), name = 'alice/alice_fc')
+        #alice_fc = tf.reshape(alice_fc, [batch_size, 2 * image_length, 1])
+        #alice_conv1 = conv_layer(alice_fc, filter_shape = [4,1,2], stride = 1, sigmoid = True, name = 'alice/alice_conv1')
+        #alice_conv2 = conv_layer(alice_conv1, filter_shape = [2,2,4], stride = 2, sigmoid = True, name = 'alice/alice_conv2')
         #alice_conv2 = tf.nn.dropout(alice_conv2, drop_rate)
-        alice_conv3 = conv_layer(alice_conv2, filter_shape = [1,4,4], stride = 1, sigmoid = True, name = 'alice/alice_conv3')
-        alice_conv4 = conv_layer(alice_conv3, filter_shape = [1,4,1], stride = 1, sigmoid = False, name = 'alice/alice_conv4')
+        #alice_conv3 = conv_layer(alice_conv2, filter_shape = [1,4,4], stride = 1, sigmoid = True, name = 'alice/alice_conv3')
+        #alice_conv4 = conv_layer(alice_conv3, filter_shape = [1,4,1], stride = 1, sigmoid = False, name = 'alice/alice_conv4')
+        alice_fc = tf.reshape(alice_fc, [-1, self.x_weidu, self.y_weidu, self.rgb])
+        alice_fc = self.g_bn0(alice_fc, train = True)
+        aclie_fc = tf.nn.relu(alice_fc)
+
+        alice_conv1 = self.conv2d_transpose(alice_fc, [self.batch_size, self.x_weidu * 2, self.y_weidu * 2, self.rgb * 2], name = 'alice/conv1')
+        alice_conv1 = self.g_bn1(alice_conv1, train = True)
+        alice_conv1 = tf.nn.relu(alice_conv1)
+
+        alice_conv2 = self.conv2d_transpose(alice_conv1, [self.batch_size, self.x_weidu * 4, self.y_weidu * 4, self.rgb * 4], name = 'alice/conv2')
+        alice_conv2 = self.g_bn2(alice_conv2, train = True)
+        alice_conv2 = tf.nn.relu(alice_conv2)
+
+        alice_conv3 = self.conv2d_transpose(alice_conv2, [self.batch_size, self.x_weidu * 2, self.y_weidu * 2, self.rgb * 2], name = 'alice/conv3')
+        alice_conv3 = self.g_bn3(alice_con3, train = True)
+        alice_conv3 = tf.nn.relu(alice_fc3)
+
+        alice_conv4 = self.conv2d_transpose(alice_conv3, [self.batch_size, self.x_weidu, self.y_weidu, self.rgb], name = 'alice/conv4')
+        alice_conv4 = tf.nn.tanh(alice_conv4)
 
 
-        self.bob_input = tf.reshape(alice_conv4, [-1, self.x_weidu, self.y_weidu, self.rgb])
+
+
+
+
+        #self.bob_input = tf.reshape(alice_conv4, [-1, self.x_weidu, self.y_weidu, self.rgb])
+        self.bob_input = alice_conv4
         
 
         #Bob网络结构
@@ -112,6 +180,12 @@ class Model:
         self.alice_saver = tf.train.Saver(self.Alice_vars)
         self.bob_saver = tf.train.Saver(self.Bob_vars)
         self.eve_saver = tf.train.Saver(self.Eve_vars)
+
+        #self.g_bn0 = batch_norm(name = 'alice/bn0')
+        #self.g_bn1 = batch_norm(name = 'alice/bn1')
+        #self.g_bn2 = batch_norm(name = 'alice/bn2')
+        #self.g_bn3 = batch_norm(name = 'alice/bn3')
+
         print("初始化")
     
     def train(self, epochs):
@@ -169,6 +243,7 @@ class Model:
 
 ### Eve的网络结构
     def discriminator_stego_nn(self, img, batch_size, name):
+        eve_input = self.image_processing_layer(img)
         eve_conv1 = convolution2d(img, 64, kernel_size = [5, 5], stride = [2,2],
         activation_fn= tf.nn.relu, normalizer_fn = BatchNorm, scope = 'eve/' + name + '/conv1')
 
@@ -202,6 +277,31 @@ class Model:
         self.alice_saver.save(self.sess, save_path + '/alice_model.ckpt')
         self.bob_saver.save(self.sess, save_path + '/bob_model.ckpt')
         self.eve_saver.save(self.sess, save_path + '/eve_model.ckpt')
+    
+    #先对图片进行处理
+    def image_processing_layer(self, X):
+        K = 1 / 12. * tf.constant(
+            [
+                [-1, 2, -2, 2, -1],
+                [2, -6, 8, -6, 2],
+                [-2, 8, -12, 8, -2],
+                [2, -6, 8, -6, 2],
+                [-1, 2, -2, 2, -1]
+            ], dtype= tf.float32
+        )
+        kernel = tf.pack([K, K, K])
+        kernel = tf.pack([kernel, kernel, kernel])
+
+        return tf.nn.conv2d(X, tf.tanspose(kernel, [2, 3, 0, 1], [1, 1, 1, 1], padding = 'SAME'))
+    
+    def conv2d_transpose(input_, output_shape, k_h = 5, k_w = 5, d_h = 2, d_w = 2, stddev = 0.2, name = "deconv2d"):
+        with tf.variable_scope(name):
+            #filter: [height, width, output_channels, in_channels]
+            w = tf.get_variable('w', [k_h, k_h, output_shape[-1], input_.get_shape()[-1]],
+                                initializer= tf.random_normal_initializer(stddev = stddev)
+            )
+            return tf.nn.conv2d_transpose(input_, w, output_shape = output_shape, strides = [1, d_h, d_w, 1])
+
 
         
 
