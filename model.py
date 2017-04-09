@@ -289,12 +289,12 @@ class Model:
                 [-1, 2, -2, 2, -1]
             ], dtype= tf.float32
         )
-        #kernel = tf.stack([K, K, K])
-        #kernel = tf.stack([kernel, kernel, kernel])
+        #kernel = tf.pack([K, K, K])
+        #kernel = tf.pack([kernel, kernel, kernel])
         kernel = tf.stack([K, K, K])
         kernel = tf.stack([kernel, kernel, kernel])
 
-        return tf.nn.conv2d(X, tf.tanspose(kernel, [2, 3, 0, 1], [1, 1, 1, 1], padding = 'SAME'))
+        return tf.nn.conv2d(X, tf.transpose(kernel, [2, 3, 0, 1], [1, 1, 1, 1], padding = 'SAME'))
     
     def conv2d_transpose(self, input_, output_shape, k_h = 5, k_w = 5, d_h = 2, d_w = 2, stddev = 0.2, name = "deconv2d"):
         with tf.variable_scope(name):
