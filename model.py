@@ -310,7 +310,7 @@ class Model:
             w = tf.get_variable('w', [k_h, k_h, 3, 3],
                                 initializer= tf.random_normal_initializer(stddev = stddev)
             )
-            return tf.nn.conv2d(input_, w, strides = [1, d_h, d_w, 1])
+            return tf.nn.conv2d(input_, w, strides = [1, d_h, d_w, 1], padding = 'SAME')
         
 
 
