@@ -307,7 +307,7 @@ class Model:
     def conv2d(self, input_, k_h = 5, k_w = 5, d_h = 4, d_w = 4, stddev = 0.2, name = "deconv2d"):
         with tf.variable_scope(name):
             #filter: [height, width, output_channels, in_channels]
-            w = tf.get_variable('w', [k_h, k_h, output_shape[-1], input_.get_shape()[-1]],
+            w = tf.get_variable('w', [k_h, k_h, 3, 3],
                                 initializer= tf.random_normal_initializer(stddev = stddev)
             )
             return tf.nn.conv2d(input_, w, strides = [1, d_h, d_w, 1])
