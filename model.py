@@ -294,7 +294,7 @@ class Model:
 
         return tf.nn.conv2d(X, tf.tanspose(kernel, [2, 3, 0, 1], [1, 1, 1, 1], padding = 'SAME'))
     
-    def conv2d_transpose(input_, output_shape, k_h = 5, k_w = 5, d_h = 2, d_w = 2, stddev = 0.2, name = "deconv2d"):
+    def conv2d_transpose(self, input_, output_shape, k_h = 5, k_w = 5, d_h = 2, d_w = 2, stddev = 0.2, name = "deconv2d"):
         with tf.variable_scope(name):
             #filter: [height, width, output_channels, in_channels]
             w = tf.get_variable('w', [k_h, k_h, output_shape[-1], input_.get_shape()[-1]],
