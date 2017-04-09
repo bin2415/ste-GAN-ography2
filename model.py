@@ -101,7 +101,7 @@ class Model:
 
         alice_conv3 = self.conv2d_transpose(alice_conv2, [self.batch_size, self.x_weidu * 2, self.y_weidu * 2, self.rgb * 2], name = 'alice/conv3')
         alice_conv3 = self.g_bn3(alice_conv3, train = True)
-        alice_conv3 = tf.nn.relu(alice_fc3)
+        alice_conv3 = tf.nn.relu(alice_conv3)
 
         alice_conv4 = self.conv2d_transpose(alice_conv3, [self.batch_size, self.x_weidu, self.y_weidu, self.rgb], name = 'alice/conv4')
         alice_conv4 = tf.nn.tanh(alice_conv4)
