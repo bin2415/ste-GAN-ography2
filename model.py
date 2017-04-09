@@ -289,6 +289,8 @@ class Model:
                 [-1, 2, -2, 2, -1]
             ], dtype= tf.float32
         )
+        #kernel = tf.stack([K, K, K])
+        #kernel = tf.stack([kernel, kernel, kernel])
         kernel = tf.stack([K, K, K])
         kernel = tf.stack([kernel, kernel, kernel])
 
