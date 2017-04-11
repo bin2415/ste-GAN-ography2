@@ -136,16 +136,24 @@ class Model:
         #Eve网络
         eve_real = self.discriminator_stego_nn(self.data_images, batch_size, 'real')
         eve_fake = self.discriminator_stego_nn(self.bob_input, batch_size, 'fake')
+        eve_real = tf.nn.tanh(eve_real)
+        eve_fake = tf.nn.tanh(eve_fake)
+        eve_real = (eve_real + 1.0) / 2.0
+        eve_fake = (eve_fake + 1.0) / 2.0
 
         #Bob损失函数
         self.Bob_loss = tf.reduce_mean(utils.Distance(bob_fc, self.P, [1]))
+        self.Bob_loss = self.Bob_loss / (N / 2.0)
 
         #Eve的损失函数
-        Eve_fake_loss = tf.reduce_mean(cross_entropy(logits = eve_fake, labels = tf.zeros_like(eve_fake)))
-        Eve_real_loss = tf.reduce_mean(cross_entropy(logits = eve_real, labels = tf.ones_like(eve_real)))
-        self.Eve_loss = Eve_fake_loss + Eve_real_loss
+        #Eve_fake_loss = tf.reduce_mean(cross_entropy(logits = eve_fake, labels = tf.zeros_like(eve_fake)))
+        #Eve_real_loss = tf.reduce_mean(cross_entropy(logits = eve_real, labels = tf.ones_like(eve_real)))
+        Eve_fake_loss = tf.reduce_mean(eve_fake)
+        Eve_real_loss = tf.reduce_mean(eve_real)
+        self.Eve_loss = Eve_fake_loss - Eve_real_loss
 
         Alice_C_loss = tf.reduce_mean(utils.Distance(self.bob_input, self.data_images, [1,2,3]))
+        Alice_C_loss = Alice_C_loss / (self.x_weidu * self.y_weidu * self.rgb / 2.0)
         self.Alice_loss = self.conf.alphaA * Alice_C_loss + self.conf.alphaB * self.Bob_loss + self.conf.alphaC * self.Eve_loss
 
         #定义优化器
@@ -212,8 +220,8 @@ class Model:
             #if i >=0 and i <= 30000:
                 ##self.sess.run(self.alice_step_only, feed_dict = {self.data_images: data[ 0: self.batch_size]})
             #self.sess.run(self.alice_step_only, feed_dict = {self.data_images: data[ 0: self.batch_size]})
-            self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
-            self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
+            #self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
+            #self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
             self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
             #if i > 30000:
             #    self.sess.run(self.bob_step, feed_dict= {self.data_images: data[0 : self.batch_size]})
