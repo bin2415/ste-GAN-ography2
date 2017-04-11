@@ -57,7 +57,7 @@ class Model:
         N:明文的长度
         batch_size:生成样例的多少
         x_weidu:图片的长
-        y_weidu:图片的宽
+        y_weidu:图片的宽Eve_real_error
         rgb_weidu:1为单色，3为rgb三色
         '''
         self.sess = sess
@@ -181,8 +181,8 @@ class Model:
 
         self.Bob_bit_error = utils.calculate_bit_error(self.P, bob_fc, [1])
         self.Alice_bit_error = utils.calculate_bit_error(self.data_images, self.bob_input, [1,2,3])
-        self.Eve_fake_error = tf.reduce_mean(tf.nn.sigmoid(eve_fake))
-        self.Eve_real_error = tf.reduce_mean(tf.nn.sigmoid(eve_real))
+        self.Eve_fake_error = tf.reduce_mean(eve_fake)
+        self.Eve_real_error = tf.reduce_mean(eve_real)
 
         #Saver
         self.alice_saver = tf.train.Saver(self.Alice_vars)
