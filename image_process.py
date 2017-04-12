@@ -13,7 +13,7 @@ def image_size_off(rootDir, savedir):
             im = Image.open(path)
             box = clipimage(im.size)
             region = im.crop(box)
-            size = (32, 32)
+            size = (64, 64)
             region.thumbnail(size, Image.ANTIALIAS)
             #这里保存thumbnail以后的结果
             region.save(
