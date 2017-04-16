@@ -218,10 +218,10 @@ class Model:
             data.append(data)
         lens = len(data)
         for i in range(epochs):
-            startIndex = (i * batch_size) % lens
+            startIndex = (i * self.batch_size) % lens
             endInndex = startIndex + batch_size
             if endIndex > lens:
-                dataTrain = data[lens-batch_size:lens]
+                dataTrain = data[lens-self.batch_size:lens]
             else:
                 dataTrain = data[startIndex : endInndex]
             #if i >=0 and i <= 30000:
