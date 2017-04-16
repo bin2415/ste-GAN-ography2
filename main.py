@@ -30,7 +30,7 @@ flags.DEFINE_string("save_pic_dict", "./savedPictures", "保存的图片位置")
 flags.DEFINE_string('save_model_dict',"./savedModel", "存放的模型的位置")
 flags.DEFINE_string("img_format", "jpg", "处理的图片格式")
 flags.DEFINE_integer("batch_size", 16, "训练的样本数量")
-flags.DEFINE_integer("plain_nums", 64, "明文的长度")
+flags.DEFINE_integer("plain_nums", 16, "明文的长度")
 flags.DEFINE_integer("training", 1, "一共训练多少次")
 flags.DEFINE_integer("training_epochs", 50000, "训练轮数")
 
