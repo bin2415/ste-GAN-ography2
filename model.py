@@ -91,11 +91,11 @@ class Model:
         alice_fc = self.g_bn0(alice_fc, train = True)
         aclie_fc = tf.nn.relu(alice_fc)
 
-        alice_conv1 = self.conv2d_transpose(alice_fc, [self.batch_size, self.x_weidu*4, self.y_weidu*4, self.rgb * 4], name = 'alice/conv1')
+        alice_conv1 = self.conv2d_transpose(alice_fc, [self.batch_size, self.x_weidu*2, self.y_weidu*2, self.rgb * 4], name = 'alice/conv1')
         alice_conv1 = self.g_bn1(alice_conv1, train = True)
         alice_conv1 = tf.nn.relu(alice_conv1)
 
-        alice_conv2 = self.conv2d_transpose(alice_conv1, [self.batch_size, self.x_weidu * 4, self.y_weidu * 4, self.rgb * 8], name = 'alice/conv2')
+        alice_conv2 = self.conv2d_transpose(alice_conv1, [self.batch_size, self.x_weidu * 2, self.y_weidu * 2, self.rgb * 8], name = 'alice/conv2')
         alice_conv2 = self.g_bn2(alice_conv2, train = True)
         alice_conv2 = tf.nn.relu(alice_conv2)
 
