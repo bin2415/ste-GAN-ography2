@@ -223,7 +223,7 @@ class Model:
             if endIndex > lens:
                 dataTrain = data[lens-self.batch_size:lens]
             else:
-                dataTrain = data[startIndex : endInndex]
+                dataTrain = data[startIndex : endIndex]
             #if i >=0 and i <= 30000:
                 ##self.sess.run(self.alice_step_only, feed_dict = {self.data_images: data[ 0: self.batch_size]})
             #self.sess.run(self.alice_step_only, feed_dict = {self.data_images: data[ 0: self.batch_size]})
