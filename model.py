@@ -219,7 +219,7 @@ class Model:
         lens = len(data)
         for i in range(epochs):
             startIndex = (i * self.batch_size) % lens
-            endInndex = startIndex + batch_size
+            endInndex = startIndex + self.batch_size
             if endIndex > lens:
                 dataTrain = data[lens-self.batch_size:lens]
             else:
