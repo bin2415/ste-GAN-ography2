@@ -216,6 +216,10 @@ class Model:
 
         while(len(data) < self.batch_size):
             data.append(data)
+        
+        if len(data) > 4096:
+            data = data[0 : 4096]
+            
         lens = len(data)
         for i in range(epochs):
             startIndex = (i * self.batch_size) % lens
