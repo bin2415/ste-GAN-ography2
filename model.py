@@ -91,15 +91,15 @@ class Model:
         alice_fc = self.g_bn0(alice_fc, train = True)
         aclie_fc = tf.nn.relu(alice_fc)
 
-        alice_conv1 = self.conv2d_transpose(alice_fc, [self.batch_size, self.x_weidu*2, self.y_weidu*2, self.rgb * 16], name = 'alice/conv1')
+        alice_conv1 = self.conv2d_transpose(alice_fc, [self.batch_size, self.x_weidu*2, self.y_weidu*2, self.rgb * 4], name = 'alice/conv1')
         alice_conv1 = self.g_bn1(alice_conv1, train = True)
         alice_conv1 = tf.nn.relu(alice_conv1)
 
-        alice_conv2 = self.conv2d_transpose(alice_conv1, [self.batch_size, self.x_weidu * 4, self.y_weidu * 4, self.rgb * 32], name = 'alice/conv2')
+        alice_conv2 = self.conv2d_transpose(alice_conv1, [self.batch_size, self.x_weidu * 4, self.y_weidu * 4, self.rgb * 8], name = 'alice/conv2')
         alice_conv2 = self.g_bn2(alice_conv2, train = True)
         alice_conv2 = tf.nn.relu(alice_conv2)
 
-        alice_conv3 = self.conv2d(alice_conv2, self.rgb * 16, name = 'alice/conv3')
+        alice_conv3 = self.conv2d(alice_conv2, self.rgb * 4, name = 'alice/conv3')
         alice_conv3 = self.g_bn3(alice_conv3, train = True)
         alice_conv3 = tf.nn.relu(alice_conv3)
 
@@ -136,24 +136,16 @@ class Model:
         #Eve网络
         eve_real = self.discriminator_stego_nn(self.data_images, batch_size, 'real')
         eve_fake = self.discriminator_stego_nn(self.bob_input, batch_size, 'fake')
-        eve_real = tf.nn.tanh(eve_real)
-        eve_fake = tf.nn.tanh(eve_fake)
-        eve_real = (eve_real + 1.0) / 2.0
-        eve_fake = (eve_fake + 1.0) / 2.0
 
         #Bob损失函数
         self.Bob_loss = tf.reduce_mean(utils.Distance(bob_fc, self.P, [1]))
-        self.Bob_loss = self.Bob_loss / (N / 2.0)
 
         #Eve的损失函数
-        #Eve_fake_loss = tf.reduce_mean(cross_entropy(logits = eve_fake, labels = tf.zeros_like(eve_fake)))
-        #Eve_real_loss = tf.reduce_mean(cross_entropy(logits = eve_real, labels = tf.ones_like(eve_real)))
-        Eve_fake_loss = tf.reduce_mean(eve_fake)
-        Eve_real_loss = tf.reduce_mean(eve_real)
-        self.Eve_loss = Eve_fake_loss - Eve_real_loss
+        Eve_fake_loss = tf.reduce_mean(cross_entropy(logits = eve_fake, labels = tf.zeros_like(eve_fake)))
+        Eve_real_loss = tf.reduce_mean(cross_entropy(logits = eve_real, labels = tf.ones_like(eve_real)))
+        self.Eve_loss = Eve_fake_loss + Eve_real_loss
 
         Alice_C_loss = tf.reduce_mean(utils.Distance(self.bob_input, self.data_images, [1,2,3]))
-        Alice_C_loss = Alice_C_loss / (self.x_weidu * self.y_weidu * self.rgb / 2.0)
         self.Alice_loss = self.conf.alphaA * Alice_C_loss + self.conf.alphaB * self.Bob_loss + self.conf.alphaC * self.Eve_loss
 
         #定义优化器
@@ -181,8 +173,8 @@ class Model:
 
         self.Bob_bit_error = utils.calculate_bit_error(self.P, bob_fc, [1])
         self.Alice_bit_error = utils.calculate_bit_error(self.data_images, self.bob_input, [1,2,3])
-        self.Eve_fake_error = tf.reduce_mean(eve_fake)
-        self.Eve_real_error = tf.reduce_mean(eve_real)
+        self.Eve_fake_error = tf.reduce_mean(tf.nn.sigmoid(eve_fake))
+        self.Eve_real_error = tf.reduce_mean(tf.nn.sigmoid(eve_real))
 
         #Saver
         self.alice_saver = tf.train.Saver(self.Alice_vars)
@@ -217,8 +209,8 @@ class Model:
         while(len(data) < self.batch_size):
             data.append(data)
         
-        if len(data) > 4096:
-            data = data[0 : 4096]
+        if len(data) > 16:
+            data = data[0 : 16]
 
         lens = len(data)
         for i in range(epochs):
@@ -231,8 +223,8 @@ class Model:
             #if i >=0 and i <= 30000:
                 ##self.sess.run(self.alice_step_only, feed_dict = {self.data_images: data[ 0: self.batch_size]})
             #self.sess.run(self.alice_step_only, feed_dict = {self.data_images: data[ 0: self.batch_size]})
-            self.sess.run(self.alice_step, feed_dict = {self.data_images: dataTrain})
-            self.sess.run(self.alice_step, feed_dict = {self.data_images: dataTrain})
+            #self.sess.run(self.alice_step, feed_dict = {self.data_images: dataTrain})
+            #self.sess.run(self.alice_step, feed_dict = {self.data_images: dataTrain})
             self.sess.run(self.alice_step, feed_dict = {self.data_images: dataTrain})
             #if i > 30000:
             #    self.sess.run(self.bob_step, feed_dict= {self.data_images: data[0 : self.batch_size]})
