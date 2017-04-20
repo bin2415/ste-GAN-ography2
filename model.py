@@ -109,11 +109,11 @@ class Model:
         alice_conv4 = self.g_bn4(alice_conv4, train = True)
         alice_conv4 = tf.nn.relu(alice_conv4)
 
-        alice_conv5 = self.conv2d(alice_conv4, self.rgb * 4, name = 'alice/conv3')
+        alice_conv5 = self.conv2d(alice_conv4, self.rgb * 4, name = 'alice/conv5')
         alice_conv5 = self.g_bn5(alice_conv5, train = True)
         alice_conv5 = tf.nn.relu(alice_conv5)
 
-        alice_conv6 = self.conv2d(alice_conv5, self.rgb, name = 'alice/conv4')
+        alice_conv6 = self.conv2d(alice_conv5, self.rgb, name = 'alice/conv6')
         alice_conv6 = tf.nn.tanh(alice_conv6)
 
 
