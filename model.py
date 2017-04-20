@@ -101,11 +101,11 @@ class Model:
         alice_conv2 = self.g_bn2(alice_conv2, train = True)
         alice_conv2 = tf.nn.relu(alice_conv2)
 
-        alice_conv3 = self.conv2d_transpose(alice_conv2, [self.batch_size, self.x_weidu * 8, self.y_weidu * 8, self.rgb * 16], name = 'alice/conv3')
-        alice_conv3 = self.g_bn3(alice_conv3, train = True)
-        alice_conv3 = tf.nn.relu(alice_conv3)
+        #alice_conv3 = self.conv2d_transpose(alice_conv2, [self.batch_size, self.x_weidu * 8, self.y_weidu * 8, self.rgb * 16], name = 'alice/conv3')
+        #alice_conv3 = self.g_bn3(alice_conv3, train = True)
+        #alice_conv3 = tf.nn.relu(alice_conv3)
 
-        alice_conv4 = self.conv2d(alice_conv3, self.rgb * 8, name = 'alice/conv4')
+        alice_conv4 = self.conv2d(alice_conv2, self.rgb * 8, name = 'alice/conv4')
         alice_conv4 = self.g_bn4(alice_conv4, train = True)
         alice_conv4 = tf.nn.relu(alice_conv4)
 
@@ -113,7 +113,7 @@ class Model:
         alice_conv5 = self.g_bn5(alice_conv5, train = True)
         alice_conv5 = tf.nn.relu(alice_conv5)
 
-        alice_conv6 = self.conv2d(alice_conv5, self.rgb, name = 'alice/conv6')
+        alice_conv6 = self.conv2d(alice_conv5, self.rgb, d_h = 1, d_w = 1, name = 'alice/conv6')
         alice_conv6 = tf.nn.tanh(alice_conv6)
 
 
@@ -334,6 +334,14 @@ class Model:
                                 initializer= tf.random_normal_initializer(stddev = stddev)
             )
             return tf.nn.conv2d(input_, w, strides = [1, d_h, d_w, 1], padding = 'SAME')
+'''
+    def conv2d2(self, input_, output_channel, k_h = 5, k_w = 5, d_h = 2, d_w = 2, stddev = 0.2, name = "deconv2d"):
+        with tf.variable_scope(name):
+            #filter: [height, width, in_channels, output_channels]
+            w = tf.get_variable('w', [k_h, k_w, input_.get_shape()[-1], output_channel],
+                                initializer= tf.random_normal_initializer(stddev = stddev)
+            )
+            return tf.nn.conv2d(input_, w, strides = [1, d_h, d_w, 1], padding = 'SAME')'''
         
 
 
