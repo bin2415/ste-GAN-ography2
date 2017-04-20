@@ -77,6 +77,8 @@ class Model:
         self.g_bn1 = batch_norm(name = 'alice/bn1')
         self.g_bn2 = batch_norm(name = 'alice/bn2')
         self.g_bn3 = batch_norm(name = 'alice/bn3')
+        self.g_bn4 = batch_norm(name = 'alice/bn4')
+        self.g_bn5 = batch_norm(name = 'alice/bn5')
 
         #Alice结构
         image_length = self.x_weidu * self.y_weidu * self.rgb
@@ -88,23 +90,30 @@ class Model:
         #alice_conv3 = conv_layer(alice_conv2, filter_shape = [1,4,4], stride = 1, sigmoid = True, name = 'alice/alice_conv3')
         #alice_conv4 = conv_layer(alice_conv3, filter_shape = [1,4,1], stride = 1, sigmoid = False, name = 'alice/alice_conv4')
         alice_fc = tf.reshape(alice_fc, [-1, self.x_weidu, self.y_weidu, self.rgb])
-        #alice_fc = self.g_bn0(alice_fc, train = True)
+        alice_fc = self.g_bn0(alice_fc, train = True)
         aclie_fc = tf.nn.relu(alice_fc)
 
         alice_conv1 = self.conv2d_transpose(alice_fc, [self.batch_size, self.x_weidu*2, self.y_weidu*2, self.rgb * 4], name = 'alice/conv1')
-        #alice_conv1 = self.g_bn1(alice_conv1, train = True)
+        alice_conv1 = self.g_bn1(alice_conv1, train = True)
         alice_conv1 = tf.nn.relu(alice_conv1)
 
         alice_conv2 = self.conv2d_transpose(alice_conv1, [self.batch_size, self.x_weidu * 4, self.y_weidu * 4, self.rgb * 8], name = 'alice/conv2')
-        #alice_conv2 = self.g_bn2(alice_conv2, train = True)
+        alice_conv2 = self.g_bn2(alice_conv2, train = True)
         alice_conv2 = tf.nn.relu(alice_conv2)
 
-        alice_conv3 = self.conv2d(alice_conv2, self.rgb * 4, name = 'alice/conv3')
-        #alice_conv3 = self.g_bn3(alice_conv3, train = True)
-        alice_conv3 = tf.nn.relu(alice_conv3)
+        alice_conv3 = self.conv2d_transpose(alice_conv2, [self.batch_size, self.x_weidu * 8, self.y_weidu * 8, self.rgb * 16], name = 'alice/conv3')
+        alice_conv3 = self.g_bn3(alice_conv2, train = True)
+        alice_conv3 = tf.nn.relu(alice_conv2)
 
-        alice_conv4 = self.conv2d(alice_conv3, self.rgb, name = 'alice/conv4')
-        alice_conv4 = tf.nn.tanh(alice_conv4)
+        alice_conv4 = self.conv2d(alice_conv3, self.rgb * 8, name = 'alice/conv4')
+        alice_conv4 = self.g_bn4(alice_conv3, train = True)
+
+        alice_conv5 = self.conv2d(alice_conv4, self.rgb * 4, name = 'alice/conv3')
+        alice_conv5 = self.g_bn5(alice_conv5, train = True)
+        alice_conv5 = tf.nn.relu(alice_conv5)
+
+        alice_conv6 = self.conv2d(alice_conv5, self.rgb, name = 'alice/conv4')
+        alice_conv6 = tf.nn.tanh(alice_conv6)
 
 
 
@@ -112,7 +121,7 @@ class Model:
 
 
         #self.bob_input = tf.reshape(alice_conv4, [-1, self.x_weidu, self.y_weidu, self.rgb])
-        self.bob_input = alice_conv4
+        self.bob_input = alice_conv6
         
 
         #Bob网络结构
