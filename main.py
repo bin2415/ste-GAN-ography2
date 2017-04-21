@@ -22,7 +22,7 @@ import sys
 #alphaA 1.2 alphaB 0.6 alphaC -0.2 alice误差60，bob误差0.5
 flags = tf.app.flags
 flags.DEFINE_float("alphaA", 0.6, "alphaA的值")
-flags.DEFINE_float("alphaB", 0.6, "alphaB的值")
+flags.DEFINE_float("alphaB", 1.8, "alphaB的值")
 flags.DEFINE_float("alphaC", -0.2, "alphaC的值")
 flags.DEFINE_float("learning_rate", 0.0008, "学习速率")
 flags.DEFINE_string("pic_dict", "./pictures", "存放的图片的位置")

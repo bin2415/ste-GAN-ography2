@@ -223,8 +223,8 @@ class Model:
         while(len(data) < self.batch_size):
             data.append(data)
         
-        if len(data) > 1024:
-            data = data[0 : 1024]
+        if len(data) > 256:
+            data = data[0 : 256]
 
         lens = len(data)
         for i in range(epochs):
