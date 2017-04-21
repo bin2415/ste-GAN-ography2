@@ -114,11 +114,11 @@ class Model:
         alice_conv5 = tf.nn.relu(alice_conv5)
 
         alice_conv6 = self.conv2d(alice_conv5, self.rgb * 4, d_h = 1, d_w = 1, name = 'alice/conv6')
-        alice_conv6 = self.g_bn3(alice_conv6, train = True)
-        alice_conv6 = tf.nn.relu(alice_conv6)
+        #alice_conv6 = self.g_bn3(alice_conv6, train = True)
+        alice_conv6 = tf.nn.tanh(alice_conv6)
 
-        alice_conv7 = self.conv2d(alice_conv6, self.rgb, d_h = 1, d_w = 1, name = 'alice/conv7')
-        alice_conv7 = tf.nn.tanh(alice_conv7)
+        #alice_conv7 = self.conv2d(alice_conv6, self.rgb, d_h = 1, d_w = 1, name = 'alice/conv7')
+        #alice_conv7 = tf.nn.tanh(alice_conv7)
 
 
 
@@ -126,7 +126,7 @@ class Model:
 
 
         #self.bob_input = tf.reshape(alice_conv4, [-1, self.x_weidu, self.y_weidu, self.rgb])
-        self.bob_input = alice_conv7
+        self.bob_input = alice_conv6
         
 
         #Bob网络结构
@@ -223,8 +223,8 @@ class Model:
         while(len(data) < self.batch_size):
             data.append(data)
         
-        if len(data) > 256:
-            data = data[0 : 256]
+        if len(data) > 128:
+            data = data[0 : 128]
 
         lens = len(data)
         for i in range(epochs):
