@@ -118,7 +118,7 @@ class Model:
         alice_conv6 = tf.nn.relu(alice_conv6)
 
         alice_conv7 = self.conv2d(alice_conv6, self.rgb, d_h = 1, d_w = 1, name = 'alice/conv7')
-        alice_conv7 = tf.nn.tanh(self.alice_conv7)
+        alice_conv7 = tf.nn.tanh(alice_conv7)
 
 
 
