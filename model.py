@@ -27,9 +27,9 @@ class batch_norm(object):
         if train:
             with tf.variable_scope(self.name) as scope:
                 self.beta = tf.get_variable("beta", [shape[-1]],
-                                    initializer=tf.constant_initializer(0.))
+                                    initializer=tf.constant_initializer(0.), trainable=True)
                 self.gamma = tf.get_variable("gamma", [shape[-1]],
-                                    initializer=tf.random_normal_initializer(1., 0.02))
+                                    initializer=tf.random_normal_initializer(1., 0.02), trainable=True)
 
                 try:
                     batch_mean, batch_var = tf.nn.moments(x, [0, 1, 2], name='moments')
@@ -169,9 +169,9 @@ class Model:
         #optimizer4 = tf.train.AdamOptimizer(self.conf.learning_rate)
         
         #获取变量列表
-        self.Alice_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, "alice/")
-        self.Bob_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, 'bob/')
-        self.Eve_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, 'eve/')
+        self.Alice_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, "alice/")
+        self.Bob_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, 'bob/')
+        self.Eve_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, 'eve/')
         print(self.Bob_vars)
 
         #定义trainning step
@@ -360,7 +360,7 @@ class Model:
         with tf.variable_scope(name):
             #filter: [height, width, output_channels, in_channels]
             w = tf.get_variable('w', [k_h, k_w, output_shape[-1], input_.get_shape()[-1]],
-                                initializer= tf.random_normal_initializer(stddev = stddev)
+                                initializer= tf.random_normal_initializer(stddev = stddev), trainable=True
             )
             return tf.nn.conv2d_transpose(input_, w, output_shape = output_shape, strides = [1, d_h, d_w, 1])
     
@@ -369,7 +369,7 @@ class Model:
         with tf.variable_scope(name):
             #filter: [height, width, in_channels, output_channels]
             w = tf.get_variable('w', [k_h, k_w, input_.get_shape()[-1], output_channel],
-                                initializer= tf.random_normal_initializer(stddev = stddev)
+                                initializer= tf.random_normal_initializer(stddev = stddev), trainable=True
             )
             return tf.nn.conv2d(input_, w, strides = [1, d_h, d_w, 1], padding = 'SAME')
 '''
