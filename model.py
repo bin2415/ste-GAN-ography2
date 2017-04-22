@@ -216,7 +216,7 @@ class Model:
         #tf.summary.scalar("bob_input", self.bob_input)
         #merged_summary_op = tf.summary.merge_all()
         #summary_writer = tf.summary.FileWriter('./logs', self.sess.graph)
-        tf.initialize_all_variables().run()
+        self.sess.run(tf.initialize_all_variables())
         bob_results = []
         alice_results = []
 
@@ -287,7 +287,7 @@ class Model:
             
                 
     def variable_init(self):
-        tf.initialize_all_variables().run() 
+        self.sess.run(tf.initialize_all_variables())
 
 
 ### Eve的网络结构
