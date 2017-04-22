@@ -40,7 +40,7 @@ for i in range(FLAGS.training):
       logger.log("training begin")
       with tf.Session() as sess:
           model = Model(sess, FLAGS, FLAGS.plain_nums, FLAGS.batch_size, FLAGS.learning_rate)
-          bob_results, alice_results = model.train(50000)
+          bob_results, alice_results = model.train(0)
           #plt.figure()
           #plt.plot(range(0, FLAGS.training_epochs, 100), bob_results)
           #plt.xlabel('training iteration', fontsize = 16)
