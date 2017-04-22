@@ -223,8 +223,8 @@ class Model:
         while(len(data) < self.batch_size):
             data.append(data)
         
-        if len(data) > 128:
-            data = data[0 : 128]
+        if len(data) > 32:
+            data = data[0 : 32]
 
         lens = len(data)
         for i in range(epochs):
@@ -262,8 +262,32 @@ class Model:
         #保存图片
         #c_output = self.sess.run(self.bob_input, feed_dict= {self.data_images: da})
         return bob_results, alice_results
-                
+
+    def test(self):
+        data_images_path = glob(os.path.join(self.conf.pic_dict, "*.%s" % self.conf.img_format))
+        if(len(data_iamges_path) == 0):
+            print("No Images here: %s" % self.conf.pic_dict)
+            exit(1)
+        data = [utils.imread(path) for path in data_images_path]
+        data = [utils.transform(image) for image in data]
+
+            #tf.initialize_all_variables().run()
+        testDataStart = 32
+        testDataEnd = len(data)
+        i = 0
+        while testDataStart <= testDataEnd:
+            if testDataStart >= testDataEnd - self.batch_size:
+                testData = data[testDataEnd-self.batch_size : testDataEnd]
+            else:
+                testData = data[testDataStart : testDataStart + self.batch_size]
+            testDataStart += self.batch_size
+            bit_error, alice_error, eve_real, eve_fake = self.sess.run([self.Bob_bit_error, self.Alice_bit_error, self.Eve_real_error, self.Eve_fake_error], 
+            feed_dict= {self.data_images: testData})
+            print("step {}, bob bit error {}, alice bit error {}, Eve real {}, Eve fake {}".format(i, bit_error, alice_error, eve_real, eve_fake))
             
+                
+    def variable_init(self):
+        tf.initialize_all_variables().run() 
 
 
 ### Eve的网络结构
@@ -321,6 +345,16 @@ class Model:
 
         return tf.nn.conv2d(X, tf.transpose(kernel, [2, 3, 0, 1]), [1, 1, 1, 1], padding='SAME')
     
+    def restore_alice(self, restore_path):
+        self.alice_saver.restore(self.sess, restore_path)
+    
+    def restore_bob(self, restore_path):
+        self.bob_saver.restore(self.sess, restore_path)
+
+    def restore_eve(self, restore_path):
+        self.eve_saver.restore(self.sess, restore_path)
+
+
     #反卷积网络
     def conv2d_transpose(self, input_, output_shape, k_h = 5, k_w = 5, d_h = 2, d_w = 2, stddev = 0.2, name = "deconv2d"):
         with tf.variable_scope(name):
@@ -346,6 +380,10 @@ class Model:
                                 initializer= tf.random_normal_initializer(stddev = stddev)
             )
             return tf.nn.conv2d(input_, w, strides = [1, d_h, d_w, 1], padding = 'SAME')'''
+        
+
+
+        
         
 
 
