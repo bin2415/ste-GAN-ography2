@@ -169,9 +169,9 @@ class Model:
         #optimizer4 = tf.train.AdamOptimizer(self.conf.learning_rate)
         
         #获取变量列表
-        self.Alice_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, "alice/")
-        self.Bob_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, 'bob/')
-        self.Eve_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, 'eve/')
+        self.Alice_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, "alice/")
+        self.Bob_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, 'bob/')
+        self.Eve_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, 'eve/')
         print(self.Bob_vars)
 
         #定义trainning step
@@ -223,8 +223,8 @@ class Model:
         while(len(data) < self.batch_size):
             data.append(data)
         
-        if len(data) > 32:
-            data = data[0 : 32]
+        if len(data) > 1024:
+            data = data[0 : 1024]
 
         lens = len(data)
         for i in range(epochs):
@@ -272,7 +272,7 @@ class Model:
         data = [utils.transform(image) for image in data]
 
             #tf.initialize_all_variables().run()
-        testDataStart = 32
+        testDataStart = 1024
         testDataEnd = len(data)
         i = 0
         while testDataStart <= testDataEnd:

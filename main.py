@@ -32,7 +32,7 @@ flags.DEFINE_string("img_format", "jpg", "处理的图片格式")
 flags.DEFINE_integer("batch_size", 32, "训练的样本数量")
 flags.DEFINE_integer("plain_nums", 16, "明文的长度")
 flags.DEFINE_integer("training", 1, "一共训练多少次")
-flags.DEFINE_integer("training_epochs", 50000, "训练轮数")
+flags.DEFINE_integer("training_epochs", 0, "训练轮数")
 
 FLAGS = flags.FLAGS
 for i in range(FLAGS.training):
