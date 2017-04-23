@@ -356,7 +356,7 @@ class Model:
 
 
     #反卷积网络
-    def conv2d_transpose(self, input_, output_shape, k_h = 5, k_w = 5, d_h = 2, d_w = 2, stddev = 0.2, name = "deconv2d"):
+    def conv2d_transpose(self, input_, output_shape, k_h = 5, k_w = 5, d_h = 2, d_w = 2, stddev = 0.02, name = "deconv2d"):
         with tf.variable_scope(name):
             #filter: [height, width, output_channels, in_channels]
             w = tf.get_variable('w', [k_h, k_w, output_shape[-1], input_.get_shape()[-1]],
@@ -365,7 +365,7 @@ class Model:
             return tf.nn.conv2d_transpose(input_, w, output_shape = output_shape, strides = [1, d_h, d_w, 1])
     
     #卷积网络
-    def conv2d(self, input_, output_channel, k_h = 5, k_w = 5, d_h = 2, d_w = 2, stddev = 0.2, name = "deconv2d"):
+    def conv2d(self, input_, output_channel, k_h = 5, k_w = 5, d_h = 2, d_w = 2, stddev = 0.02, name = "conv2d"):
         with tf.variable_scope(name):
             #filter: [height, width, in_channels, output_channels]
             w = tf.get_variable('w', [k_h, k_w, input_.get_shape()[-1], output_channel],
