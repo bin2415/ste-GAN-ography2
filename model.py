@@ -163,9 +163,9 @@ class Model:
         self.Alice_loss = self.conf.alphaA * Alice_C_loss + self.conf.alphaB * self.Bob_loss + self.conf.alphaC * self.Eve_loss
 
         #定义优化器
-        optimizer1 = tf.train.AdamOptimizer(self.conf.learning_rate)
-        optimizer2 = tf.train.AdamOptimizer(self.conf.learning_rate)
-        optimizer3 = tf.train.AdamOptimizer(self.conf.learning_rate)
+        optimizer1 = tf.train.AdamOptimizer(self.conf.learning_rate, beta1=self.conf.beta1)
+        optimizer2 = tf.train.AdamOptimizer(self.conf.learning_rate, beta1=self.conf.beta1)
+        optimizer3 = tf.train.AdamOptimizer(self.conf.learning_rate, beta1=self.conf.beta1)
         #optimizer4 = tf.train.AdamOptimizer(self.conf.learning_rate)
         
         #获取变量列表
@@ -265,7 +265,7 @@ class Model:
 
     def test(self):
         data_images_path = glob(os.path.join(self.conf.pic_dict, "*.%s" % self.conf.img_format))
-        if(len(data_iamges_path) == 0):
+        if(len(data_images_path) == 0):
             print("No Images here: %s" % self.conf.pic_dict)
             exit(1)
         data = [utils.imread(path) for path in data_images_path]
