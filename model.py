@@ -82,14 +82,14 @@ class Model:
 
         #Alice结构
         image_length = self.x_weidu * self.y_weidu * self.rgb
-        alice_fc = fc_layer(alice_input, shape = (image_length + N, image_length), name = 'alice/alice_fc')
+        alice_fc = fc_layer(alice_input, shape = (image_length + N, image_length*4), name = 'alice/alice_fc')
         #alice_fc = tf.reshape(alice_fc, [batch_size, 2 * image_length, 1])
         #alice_conv1 = conv_layer(alice_fc, filter_shape = [4,1,2], stride = 1, sigmoid = True, name = 'alice/alice_conv1')
         #alice_conv2 = conv_layer(alice_conv1, filter_shape = [2,2,4], stride = 2, sigmoid = True, name = 'alice/alice_conv2')
         #alice_conv2 = tf.nn.dropout(alice_conv2, drop_rate)
         #alice_conv3 = conv_layer(alice_conv2, filter_shape = [1,4,4], stride = 1, sigmoid = True, name = 'alice/alice_conv3')
         #alice_conv4 = conv_layer(alice_conv3, filter_shape = [1,4,1], stride = 1, sigmoid = False, name = 'alice/alice_conv4')
-        alice_fc = tf.reshape(alice_fc, [-1, self.x_weidu, self.y_weidu, self.rgb])
+        alice_fc = tf.reshape(alice_fc, [-1, self.x_weidu, self.y_weidu, self.rgb*4])
         alice_fc = self.g_bn0(alice_fc, train = True)
         aclie_fc = tf.nn.relu(alice_fc)
 
