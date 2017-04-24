@@ -195,6 +195,8 @@ class Model:
         self.bob_saver = tf.train.Saver(self.Bob_vars)
         self.eve_saver = tf.train.Saver(self.Eve_vars)
 
+        self.saver = tf.train.Saver()
+
         #self.g_bn0 = batch_norm(name = 'alice/bn0')
         #self.g_bn1 = batch_norm(name = 'alice/bn1')
         #self.g_bn2 = batch_norm(name = 'alice/bn2')
@@ -323,9 +325,9 @@ class Model:
         save_path: string
         要保存的模型的地址
         '''
-        self.alice_saver.save(self.sess, save_path + '/alice_model.ckpt')
-        self.bob_saver.save(self.sess, save_path + '/bob_model.ckpt')
-        self.eve_saver.save(self.sess, save_path + '/eve_model.ckpt')
+        #self.alice_saver.save(self.sess, save_path + '/alice_model.ckpt')
+        #self.bob_saver.save(self.sess, save_path + '/bob_model.ckpt')
+        self.saver.save(self.sess, save_path + '/save.ckpt')
     
     #先对图片进行处理
     def image_processing_layer(self, X):
@@ -353,6 +355,9 @@ class Model:
 
     def restore_eve(self, restore_path):
         self.eve_saver.restore(self.sess, restore_path)
+
+    def restore_saver(self, restore_path):
+        self.saver.restore(self.sess, restore_path)
 
 
     #反卷积网络
