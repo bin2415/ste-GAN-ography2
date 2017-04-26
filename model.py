@@ -4,6 +4,7 @@ from helper import *
 import numpy as alice_input
 from glob import glob
 import os
+import numpy as np
 from tensorflow.contrib.layers import convolution2d
 from tensorflow.contrib.layers import fully_connected
 from tensorflow.python.ops.nn import sigmoid_cross_entropy_with_logits as cross_entropy
