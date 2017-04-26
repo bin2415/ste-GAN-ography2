@@ -71,7 +71,7 @@ class Model:
         self.data_input = tf.placeholder(tf.float32, [self.batch_size, N])
         self.N = N
         alice_image = tf.reshape(self.data_images, [batch_size, -1])
-        alice_input = tf.concat([self.data_images, alice_image], 1)
+        alice_input = tf.concat([self.data_input, alice_image], 1)
 
         drop_rate = tf.constant(0.5, dtype = tf.float32)
 
