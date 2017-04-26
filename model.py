@@ -232,7 +232,7 @@ class Model:
             data = data[0 : 1024]
 
         lens = len(data)
-        input_data = np.random.random_integers(0,1,size = (4096, self.N))
+        input_data = 2*np.random.random_integers(0,1,size = (4096, self.N)) - 1
         startInputIndex = 0
         for i in range(epochs):
             startIndex = (i * self.batch_size) % lens
