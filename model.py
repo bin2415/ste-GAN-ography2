@@ -244,6 +244,7 @@ class Model:
             if startInputIndex >= 4096:
                 startInputIndex = startInputIndex - 4096
             input_data1 = input_data[startInputIndex : startInputIndex + self.batch_size]
+            startInputIndex += self.batch_size
             #if i >=0 and i <= 30000:
                 ##self.sess.run(self.alice_step_only, feed_dict = {self.data_images: data[ 0: self.batch_size]})
             #self.sess.run(self.alice_step_only, feed_dict = {self.data_images: data[ 0: self.batch_size]})
