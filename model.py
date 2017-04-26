@@ -154,7 +154,7 @@ class Model:
         eve_fake = self.discriminator_stego_nn(self.bob_input, batch_size, 'fake')
 
         #Bob损失函数
-        self.Bob_loss = tf.reduce_mean(utils.Distance(bob_fc, self.P, [1]))
+        self.Bob_loss = tf.reduce_mean(utils.Distance(bob_fc, self.data_input, [1]))
 
         #Eve的损失函数
         Eve_fake_loss = tf.reduce_mean(cross_entropy(logits = eve_fake, labels = tf.zeros_like(eve_fake)))
@@ -187,7 +187,7 @@ class Model:
         self.bob_saver = tf.train.Saver(self.Bob_vars)
         self.eve_saver = tf.train.Saver(self.Eve_vars)
 
-        self.Bob_bit_error = utils.calculate_bit_error(self.P, bob_fc, [1])
+        self.Bob_bit_error = utils.calculate_bit_error(self.data_input, bob_fc, [1])
         self.Alice_bit_error = utils.calculate_bit_error(self.data_images, self.bob_input, [1,2,3])
         self.Eve_fake_error = tf.reduce_mean(tf.nn.sigmoid(eve_fake))
         self.Eve_real_error = tf.reduce_mean(tf.nn.sigmoid(eve_real))
