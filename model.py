@@ -62,14 +62,16 @@ class Model:
         '''
         self.sess = sess
         self.conf = conf
-        self.P = utils.generate_data(batch_size, N)
+        #self.P = utils.generate_data(batch_size, N)
         self.x_weidu = x_weidu
         self.y_weidu = y_weidu
         self.rgb = rgb_weidu
         self.batch_size = batch_size
         self.data_images = tf.placeholder(tf.float32, [self.batch_size] + list(shape))
+        self.data_input = tf.placeholder(tf.float32, [self.batch_size, N])
+        self.N = N
         alice_image = tf.reshape(self.data_images, [batch_size, -1])
-        alice_input = tf.concat([self.P, alice_image], 1)
+        alice_input = tf.concat([self.data_images, alice_image], 1)
 
         drop_rate = tf.constant(0.5, dtype = tf.float32)
 
@@ -229,6 +231,8 @@ class Model:
             data = data[0 : 1024]
 
         lens = len(data)
+        input_data = np.random.random_integers(0,1,size = (4096, N))
+        startInputIndex = 0
         for i in range(epochs):
             startIndex = (i * self.batch_size) % lens
             endIndex = startIndex + self.batch_size
@@ -236,29 +240,32 @@ class Model:
                 dataTrain = data[lens-self.batch_size:lens]
             else:
                 dataTrain = data[startIndex : endIndex]
+            if startInputIndex >= 4096:
+                startInputIndex = startInputIndex - 4096
+            input_data1 = input_data[startInputIndex : startInputIndex + self.batch_size]
             #if i >=0 and i <= 30000:
                 ##self.sess.run(self.alice_step_only, feed_dict = {self.data_images: data[ 0: self.batch_size]})
             #self.sess.run(self.alice_step_only, feed_dict = {self.data_images: data[ 0: self.batch_size]})
             #self.sess.run(self.alice_step, feed_dict = {self.data_images: dataTrain})
             #self.sess.run(self.alice_step, feed_dict = {self.data_images: dataTrain})
-            self.sess.run(self.alice_step, feed_dict = {self.data_images: dataTrain})
+            self.sess.run(self.alice_step, feed_dict = {self.data_images: dataTrain, self.data_input:input_data1})
             #if i > 30000:
             #    self.sess.run(self.bob_step, feed_dict= {self.data_images: data[0 : self.batch_size]})
             #    self.sess.run(self.eve_step, feed_dict= {self.data_images: data[0 : self.batch_size]})
-            self.sess.run(self.bob_step, feed_dict= {self.data_images: dataTrain})
+            self.sess.run(self.bob_step, feed_dict= {self.data_images: dataTrain, self.data_input:input_data1})
             #self.sess.run(self.eve_step, feed_dict= {self.data_images: data[0 : self.batch_size]})
-            self.sess.run(self.eve_step, feed_dict= {self.data_images: dataTrain})
+            self.sess.run(self.eve_step, feed_dict= {self.data_images: dataTrain, self.data_input:input_data1})
             #self.sess.run(self.alice_step, feed_dict = {self.data_images: data[ 0: self.batch_size]})
             if i % 100 == 0:
                 bit_error, alice_error, eve_real, eve_fake = self.sess.run([self.Bob_bit_error, self.Alice_bit_error, self.Eve_real_error, self.Eve_fake_error], 
-                feed_dict= {self.data_images: dataTrain})
+                feed_dict= {self.data_images: dataTrain, self.data_input:input_data1})
                 print("step {}, bob bit error {}, alice bit error {}, Eve real {}, Eve fake {}".format(i, bit_error, alice_error, eve_real, eve_fake))
                 bob_results.append(bit_error)
                 alice_results.append(alice_error)
                 #summary_str = self.sess.run(merged_summary_op, feed_dict = {self.data_images: data[ 0: self.batch_size]})
                 #summary_writer.add_summary(summary_str, i)
-            if (i > 45000) and (i % 100 == 0):
-                c_output = self.sess.run(self.bob_input, feed_dict= {self.data_images: dataTrain})
+            if (i > 48000) and (i % 100 == 0):
+                c_output = self.sess.run(self.bob_input, feed_dict= {self.data_images: dataTrain, self.data_input:input_data1})
                 c_output = utils.inverse_transform(c_output)
                 utils.save_images(c_output, i/100, self.conf.save_pic_dict)
         #保存图片
