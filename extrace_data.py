@@ -5,9 +5,10 @@ f = open(fileName,'r')
 data = list()
 for line in f.readlines():
     line = line.strip()
-    regex = re.compile(r'(\w|\W)*bob bit error (.+?),(\w|\W)*')
-    result = regex.findall(line)
-    data.append(float(result[0][1]))
+    if line != "":
+        regex = re.compile(r'(\w|\W)*bob bit error (.+?),(\w|\W)*')
+        result = regex.findall(line)
+        data.append(float(result[0][1]))
 f.close()
 xlabel = range(0, 50000, 100)
 plt.figure()
