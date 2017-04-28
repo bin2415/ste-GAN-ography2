@@ -281,6 +281,8 @@ class Model:
             exit(1)
         data = [utils.imread(path) for path in data_images_path]
         data = [utils.transform(image) for image in data]
+        input_data = 2*np.random.random_integers(0,1,size = (4096, self.N)) - 1
+        startInputIndex = 0
 
             #tf.initialize_all_variables().run()
         testDataStart = 1024
@@ -292,8 +294,13 @@ class Model:
             else:
                 testData = data[testDataStart : testDataStart + self.batch_size]
             testDataStart += self.batch_size
+            if startInputIndex >= 4096:
+                startInputIndex = startInputIndex - 4096
+            input_data1 = input_data[startInputIndex : startInputIndex + self.batch_size]
+            startInputIndex += self.batch_size
+            i += 1
             bit_error, alice_error, eve_real, eve_fake = self.sess.run([self.Bob_bit_error, self.Alice_bit_error, self.Eve_real_error, self.Eve_fake_error], 
-            feed_dict= {self.data_images: testData})
+            feed_dict= {self.data_images: testData, self.data_input:input_data1})
             print("step {}, bob bit error {}, alice bit error {}, Eve real {}, Eve fake {}".format(i, bit_error, alice_error, eve_real, eve_fake))
             
                 

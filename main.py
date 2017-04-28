@@ -48,6 +48,8 @@ for i in range(FLAGS.training):
           #plt.ylabel('bit error', fontsize = 16)
           #plt.savefig(FLAGS.save_pic_dict+"/training.png")
           model.save(FLAGS.save_model_dict)
+          print("Test Begin")
+          model.test()
           #c_output = sess.run(model.bob_input, feed_dict=)
       #model = Model(FLAGS, FLAGS.plain_nums, FLAGS.batch_size, FLAGS.learning_rate)
       #print("training {0} begining".format(i))
