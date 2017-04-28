@@ -100,7 +100,7 @@ class Model:
         alice_conv1 = self.g_bn1(alice_conv1, train = True)
         alice_conv1 = tf.nn.relu(alice_conv1)
 
-        alice_conv2 = self.conv2d_transpose(alice_conv1, [self.batch_size, self.x_weidu * 4, self.y_weidu * 4, self.rgb * 8], name = 'alice/conv2')
+        alice_conv2 = self.conv2d_transpose(alice_conv1, [self.batch_size, self.x_weidu * 4, self.y_weidu * 4, self.rgb * 2], name = 'alice/conv2')
         alice_conv2 = self.g_bn2(alice_conv2, train = True)
         alice_conv2 = tf.nn.relu(alice_conv2)
 
@@ -108,11 +108,11 @@ class Model:
         #alice_conv3 = self.g_bn3(alice_conv3, train = True)
         #alice_conv3 = tf.nn.relu(alice_conv3)
 
-        alice_conv4 = self.conv2d(alice_conv2, self.rgb * 8, name = 'alice/conv4')
+        alice_conv4 = self.conv2d(alice_conv2, self.rgb * 4, name = 'alice/conv4')
         alice_conv4 = self.g_bn4(alice_conv4, train = True)
         alice_conv4 = tf.nn.relu(alice_conv4)
 
-        alice_conv5 = self.conv2d(alice_conv4, self.rgb * 4, name = 'alice/conv5')
+        alice_conv5 = self.conv2d(alice_conv4, self.rgb * 8, name = 'alice/conv5')
         alice_conv5 = self.g_bn5(alice_conv5, train = True)
         alice_conv5 = tf.nn.relu(alice_conv5)
 
