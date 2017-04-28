@@ -228,8 +228,8 @@ class Model:
         while(len(data) < self.batch_size):
             data.append(data)
         
-        if len(data) > 1024:
-            data = data[0 : 1024]
+        if len(data) > 4096:
+            data = data[0 : 4096]
 
         lens = len(data)
         input_data = 2*np.random.random_integers(0,1,size = (4096, self.N)) - 1
@@ -285,7 +285,7 @@ class Model:
         startInputIndex = 0
 
             #tf.initialize_all_variables().run()
-        testDataStart = 1024
+        testDataStart = 4096
         testDataEnd = len(data)
         i = 0
         while testDataStart <= testDataEnd:
